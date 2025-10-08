@@ -1,10 +1,13 @@
-"""
-Business metrics calculation module for e-commerce data analysis.
+"""Business metrics calculation module for e-commerce data analysis.
+
+This module provides the core metric calculations and plotting helpers used by
+the refactored EDA notebook. Functions and classes are written to be
+reusable and unit-testable.
 """
 
 import pandas as pd
 import numpy as np
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Any
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
@@ -12,10 +15,18 @@ import matplotlib.pyplot as plt
 
 # Optional seaborn import
 try:
-    import seaborn as sns
+    import seaborn as sns  # type: ignore
     HAS_SEABORN = True
-except ImportError:
+except Exception:
     HAS_SEABORN = False
+
+__all__ = [
+    "BusinessMetricsCalculator",
+    "MetricsVisualizer",
+    "format_currency",
+    "format_percentage",
+    "print_metrics_summary",
+]
 
 
 class BusinessMetricsCalculator:
@@ -349,13 +360,21 @@ class MetricsVisualizer:
         Returns:
             go.Figure: Plotly choropleth map
         """
-        geo_data = self.report_data['geographic_performance']
+        geo_data = self.report_data.get('geographic_performance')
         year = self.report_data['analysis_period']
         
-        if 'error' in geo_data.columns:
+        # Defensive checks: geo_data might be None, a dict with 'error' or a DataFrame
+        if geo_data is None:
             fig = go.Figure()
-            fig.add_annotation(text="Geographic data not available", 
-                             x=0.5, y=0.5, showarrow=False, font_size=16)
+            fig.add_annotation(text="Geographic data not available", x=0.5, y=0.5, showarrow=False, font_size=16)
+            return fig
+        if isinstance(geo_data, dict) and geo_data.get('error'):
+            fig = go.Figure()
+            fig.add_annotation(text=str(geo_data.get('error')), x=0.5, y=0.5, showarrow=False, font_size=16)
+            return fig
+        if isinstance(geo_data, pd.DataFrame) and 'error' in geo_data.columns:
+            fig = go.Figure()
+            fig.add_annotation(text="Geographic data not available", x=0.5, y=0.5, showarrow=False, font_size=16)
             return fig
         
         fig = px.choropleth(
@@ -393,11 +412,11 @@ class MetricsVisualizer:
         # For now, create a placeholder
         fig, ax = plt.subplots(figsize=figsize)
         
-        satisfaction_metrics = self.report_data['customer_satisfaction']
-        
-        if 'error' in satisfaction_metrics:
-            ax.text(0.5, 0.5, 'Review data not available', 
-                   ha='center', va='center', transform=ax.transAxes, fontsize=14)
+        satisfaction_metrics = self.report_data.get('customer_satisfaction', {})
+
+        # Defensive: satisfaction_metrics may be a dict with an 'error' key
+        if isinstance(satisfaction_metrics, dict) and satisfaction_metrics.get('error'):
+            ax.text(0.5, 0.5, 'Review data not available', ha='center', va='center', transform=ax.transAxes, fontsize=14)
             return fig
         
         # Create a summary bar chart of satisfaction metrics

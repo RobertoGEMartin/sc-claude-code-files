@@ -1,13 +1,21 @@
-"""
-Data loading and processing module for e-commerce data analysis.
+"""Data loading and processing module for e-commerce data analysis.
+
+Provides a loader class and convenience helpers used by the refactored EDA
+notebook. The loader performs safe parsing and joins between tables and
+exposes a method to create a combined sales dataset filtered by year/month.
 """
 
 import pandas as pd
 import numpy as np
-from typing import Dict, Tuple, Optional
+from typing import Dict, Tuple, Optional, Any
 import warnings
 
 warnings.filterwarnings('ignore')
+
+__all__ = [
+    "EcommerceDataLoader",
+    "load_and_process_data",
+]
 
 
 class EcommerceDataLoader:
@@ -44,10 +52,11 @@ class EcommerceDataLoader:
         
         for key, filename in file_mappings.items():
             try:
-                self.raw_data[key] = pd.read_csv(f"{self.data_path}{filename}")
-                print(f"Loaded {key}: {len(self.raw_data[key])} records")
+                df = pd.read_csv(f"{self.data_path}{filename}")
+                self.raw_data[key] = df
+                print(f"Loaded {key}: {len(df):,} records")
             except FileNotFoundError:
-                print(f"Warning: {filename} not found, skipping...")
+                print(f"Warning: {filename} not found in {self.data_path}, skipping...")
         
         return self.raw_data
     
@@ -58,7 +67,10 @@ class EcommerceDataLoader:
         Returns:
             pd.DataFrame: Cleaned orders data
         """
-        orders = self.raw_data['orders'].copy()
+        orders = self.raw_data.get('orders')
+        if orders is None:
+            raise ValueError("Orders data has not been loaded. Call load_raw_data() first.")
+        orders = orders.copy()
         
         # Convert timestamp columns to datetime
         timestamp_cols = [
@@ -74,9 +86,15 @@ class EcommerceDataLoader:
                 orders[col] = pd.to_datetime(orders[col])
         
         # Extract date components
-        orders['purchase_year'] = orders['order_purchase_timestamp'].dt.year
-        orders['purchase_month'] = orders['order_purchase_timestamp'].dt.month
-        orders['purchase_date'] = orders['order_purchase_timestamp'].dt.date
+        # Safely extract date components if purchase timestamp exists
+        if 'order_purchase_timestamp' in orders.columns:
+            orders['purchase_year'] = orders['order_purchase_timestamp'].dt.year
+            orders['purchase_month'] = orders['order_purchase_timestamp'].dt.month
+            orders['purchase_date'] = orders['order_purchase_timestamp'].dt.date
+        else:
+            orders['purchase_year'] = np.nan
+            orders['purchase_month'] = np.nan
+            orders['purchase_date'] = pd.NaT
         
         return orders
     
@@ -87,14 +105,21 @@ class EcommerceDataLoader:
         Returns:
             pd.DataFrame: Cleaned order items data
         """
-        order_items = self.raw_data['order_items'].copy()
+        order_items = self.raw_data.get('order_items')
+        if order_items is None:
+            raise ValueError("Order items data has not been loaded. Call load_raw_data() first.")
+        order_items = order_items.copy()
         
         # Convert shipping limit date to datetime
         if 'shipping_limit_date' in order_items.columns:
             order_items['shipping_limit_date'] = pd.to_datetime(order_items['shipping_limit_date'])
         
         # Calculate total item value (price + freight)
-        order_items['total_item_value'] = order_items['price'] + order_items['freight_value']
+        # Coerce numeric columns and compute total item value
+        for col in ['price', 'freight_value']:
+            if col in order_items.columns:
+                order_items[col] = pd.to_numeric(order_items[col], errors='coerce').fillna(0)
+        order_items['total_item_value'] = order_items.get('price', 0) + order_items.get('freight_value', 0)
         
         return order_items
     
@@ -105,7 +130,10 @@ class EcommerceDataLoader:
         Returns:
             pd.DataFrame: Cleaned reviews data
         """
-        reviews = self.raw_data['reviews'].copy()
+        reviews = self.raw_data.get('reviews')
+        if reviews is None:
+            return pd.DataFrame()
+        reviews = reviews.copy()
         
         # Convert review dates to datetime
         date_cols = ['review_creation_date', 'review_answer_timestamp']
@@ -130,7 +158,10 @@ class EcommerceDataLoader:
             pd.DataFrame: Comprehensive sales dataset
         """
         # Start with order items
-        sales_data = self.processed_data['order_items'].copy()
+        sales_data = self.processed_data.get('order_items')
+        if sales_data is None:
+            raise ValueError("Processed order_items not found. Call process_all_data() first.")
+        sales_data = sales_data.copy()
         
         # Join with orders
         sales_data = sales_data.merge(
@@ -142,14 +173,14 @@ class EcommerceDataLoader:
         )
         
         # Filter by order status
-        if status_filter:
+        if status_filter and 'order_status' in sales_data.columns:
             sales_data = sales_data[sales_data['order_status'] == status_filter]
         
         # Apply time filters
-        if year_filter:
+        if year_filter and 'purchase_year' in sales_data.columns:
             sales_data = sales_data[sales_data['purchase_year'] == year_filter]
         
-        if month_filter:
+        if month_filter and 'purchase_month' in sales_data.columns:
             sales_data = sales_data[sales_data['purchase_month'] == month_filter]
         
         # Add product information
@@ -168,8 +199,8 @@ class EcommerceDataLoader:
                 how='left'
             )
         
-        # Add review information
-        if 'reviews' in self.raw_data:
+        # Add review information if available
+        if 'reviews' in self.raw_data and not self.raw_data.get('reviews') is None:
             sales_data = sales_data.merge(
                 self.raw_data['reviews'][['order_id', 'review_score']],
                 on='order_id',
@@ -179,8 +210,7 @@ class EcommerceDataLoader:
         # Calculate delivery metrics
         if 'order_delivered_customer_date' in sales_data.columns and 'order_purchase_timestamp' in sales_data.columns:
             sales_data['delivery_days'] = (
-                sales_data['order_delivered_customer_date'] - 
-                sales_data['order_purchase_timestamp']
+                sales_data['order_delivered_customer_date'] - sales_data['order_purchase_timestamp']
             ).dt.days
         
         return sales_data
