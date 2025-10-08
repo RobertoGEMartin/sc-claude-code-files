@@ -337,8 +337,8 @@ def main():
         st.error("Failed to load data. Please check your data files.")
         return
     
-    # Header with title and date filters
-    col1, col2, col3 = st.columns([2, 1, 1])
+    # Header with title and year filter (title left, filter right as per spec)
+    col1, col2 = st.columns([3, 1])
     
     with col1:
         st.title("📊 E-commerce Analytics Dashboard")
@@ -354,24 +354,14 @@ def main():
             default_year_index = available_years.index(2023)
         
         selected_year = st.selectbox(
-            "Select Year",
+            "Year",
             options=available_years,
             index=default_year_index,
             key="year_filter"
         )
     
-    with col3:
-        # Month filter
-        month_options = ['All Months'] + [f'Month {i}' for i in range(1, 13)]
-        selected_month_display = st.selectbox(
-            "Select Month",
-            options=month_options,
-            index=0,
-            key="month_filter"
-        )
-        
-        # Convert display to actual month number
-        selected_month = None if selected_month_display == 'All Months' else int(selected_month_display.split(' ')[1])
+    # Month filter is not in the spec, so we'll use None (full year)
+    selected_month = None
     
     # Create datasets based on selected year and month
     current_data = loader.create_sales_dataset(
