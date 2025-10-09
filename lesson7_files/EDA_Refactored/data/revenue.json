@@ -1,0 +1,74 @@
+[
+  {
+    "month": 1,
+    "revenue": 284855.48,
+    "year": 2023,
+    "orders": 384
+  },
+  {
+    "month": 2,
+    "revenue": 276758.54,
+    "year": 2023,
+    "orders": 384
+  },
+  {
+    "month": 3,
+    "revenue": 285618.77,
+    "year": 2023,
+    "orders": 394
+  },
+  {
+    "month": 4,
+    "revenue": 253794.62,
+    "year": 2023,
+    "orders": 370
+  },
+  {
+    "month": 5,
+    "revenue": 301347.96,
+    "year": 2023,
+    "orders": 396
+  },
+  {
+    "month": 6,
+    "revenue": 289126.72,
+    "year": 2023,
+    "orders": 406
+  },
+  {
+    "month": 7,
+    "revenue": 296209.39,
+    "year": 2023,
+    "orders": 392
+  },
+  {
+    "month": 8,
+    "revenue": 286645.6,
+    "year": 2023,
+    "orders": 375
+  },
+  {
+    "month": 9,
+    "revenue": 303793.15,
+    "year": 2023,
+    "orders": 384
+  },
+  {
+    "month": 10,
+    "revenue": 259890.15,
+    "year": 2023,
+    "orders": 379
+  },
+  {
+    "month": 11,
+    "revenue": 259518.93,
+    "year": 2023,
+    "orders": 384
+  },
+  {
+    "month": 12,
+    "revenue": 262735.43,
+    "year": 2023,
+    "orders": 387
+  }
+]

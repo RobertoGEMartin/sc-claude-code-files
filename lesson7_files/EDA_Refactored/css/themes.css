@@ -1,0 +1,188 @@
+/* Theme Variables */
+
+/* Light Theme */
+.theme-light {
+    --bg-color: #ffffff;
+    --text-color: #2c3e50;
+    --text-secondary: #6c757d;
+    --heading-color: #1a202c;
+    
+    --header-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --footer-bg: #f8f9fa;
+    
+    --card-bg: #ffffff;
+    --border-color: #e9ecef;
+    --card-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --card-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.15);
+    
+    --accent-color: #3b82f6;
+    --accent-color-hover: #2563eb;
+    --success-color: #10b981;
+    --error-color: #ef4444;
+    --warning-color: #f59e0b;
+    
+    --input-bg: #ffffff;
+    --tooltip-bg: rgba(255, 255, 255, 0.95);
+    --tooltip-text: #2c3e50;
+    
+    /* D3 Chart Colors */
+    --chart-primary: #3b82f6;
+    --chart-secondary: #8b5cf6;
+    --chart-tertiary: #06b6d4;
+    --chart-accent: #f59e0b;
+    --chart-success: #10b981;
+    --chart-error: #ef4444;
+    
+    /* Chart Grid and Axes */
+    --chart-grid: rgba(0, 0, 0, 0.1);
+    --chart-axis: #6c757d;
+}
+
+/* Dark Theme */
+.theme-dark {
+    --bg-color: #0f172a;
+    --text-color: #e2e8f0;
+    --text-secondary: #94a3b8;
+    --heading-color: #f1f5f9;
+    
+    --header-bg: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    --footer-bg: #1e293b;
+    
+    --card-bg: #1e293b;
+    --border-color: #334155;
+    --card-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    --card-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.4);
+    
+    --accent-color: #60a5fa;
+    --accent-color-hover: #3b82f6;
+    --success-color: #34d399;
+    --error-color: #f87171;
+    --warning-color: #fbbf24;
+    
+    --input-bg: #334155;
+    --tooltip-bg: rgba(30, 41, 59, 0.95);
+    --tooltip-text: #e2e8f0;
+    
+    /* D3 Chart Colors - Adjusted for dark theme */
+    --chart-primary: #60a5fa;
+    --chart-secondary: #a78bfa;
+    --chart-tertiary: #22d3ee;
+    --chart-accent: #fbbf24;
+    --chart-success: #34d399;
+    --chart-error: #f87171;
+    
+    /* Chart Grid and Axes */
+    --chart-grid: rgba(255, 255, 255, 0.1);
+    --chart-axis: #94a3b8;
+}
+
+/* Theme Transition Animation */
+.theme-light,
+.theme-dark {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.theme-light *,
+.theme-dark * {
+    transition: background-color 0.3s ease, 
+                color 0.3s ease, 
+                border-color 0.3s ease,
+                box-shadow 0.3s ease;
+}
+
+/* Theme-specific adjustments for SVG elements */
+.theme-dark .chart-axis line,
+.theme-dark .chart-axis path {
+    stroke: var(--chart-axis);
+}
+
+.theme-dark .chart-axis text {
+    fill: var(--chart-axis);
+}
+
+.theme-light .chart-axis line,
+.theme-light .chart-axis path {
+    stroke: var(--chart-axis);
+}
+
+.theme-light .chart-axis text {
+    fill: var(--chart-axis);
+}
+
+/* D3 Element Theming */
+.theme-dark .chart-bar {
+    fill: var(--chart-primary);
+}
+
+.theme-light .chart-bar {
+    fill: var(--chart-primary);
+}
+
+.theme-dark .chart-line {
+    stroke: var(--chart-primary);
+}
+
+.theme-light .chart-line {
+    stroke: var(--chart-primary);
+}
+
+/* Color Scales for D3 Charts */
+.color-scale-1 { color: var(--chart-primary); }
+.color-scale-2 { color: var(--chart-secondary); }
+.color-scale-3 { color: var(--chart-tertiary); }
+.color-scale-4 { color: var(--chart-accent); }
+.color-scale-5 { color: var(--chart-success); }
+
+/* Chart-specific theme classes */
+.revenue-line {
+    stroke: var(--chart-primary);
+    stroke-width: 3px;
+    fill: none;
+}
+
+.revenue-area {
+    fill: var(--chart-primary);
+    opacity: 0.1;
+}
+
+.category-bar {
+    fill: var(--chart-secondary);
+    transition: fill 0.3s ease;
+}
+
+.category-bar:hover {
+    fill: var(--chart-accent);
+}
+
+.review-bar {
+    transition: fill 0.3s ease;
+}
+
+.review-bar-1 { fill: var(--error-color); }
+.review-bar-2 { fill: #fb923c; }
+.review-bar-3 { fill: var(--warning-color); }
+.review-bar-4 { fill: #a3e635; }
+.review-bar-5 { fill: var(--success-color); }
+
+/* Accessibility improvements for themes */
+@media (prefers-reduced-motion: reduce) {
+    .theme-light,
+    .theme-dark,
+    .theme-light *,
+    .theme-dark * {
+        transition: none !important;
+    }
+}
+
+/* High contrast mode adjustments */
+@media (prefers-contrast: high) {
+    .theme-light {
+        --border-color: #000000;
+        --text-secondary: #000000;
+    }
+    
+    .theme-dark {
+        --border-color: #ffffff;
+        --text-secondary: #ffffff;
+    }
+}

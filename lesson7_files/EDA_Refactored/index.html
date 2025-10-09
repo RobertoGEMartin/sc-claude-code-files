@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-commerce Business Analytics Dashboard</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/themes.css">
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+</head>
+<body class="theme-light">
+    <!-- Header -->
+    <header class="dashboard-header">
+        <div class="header-content">
+            <h1>📊 E-commerce Business Analytics</h1>
+            <p class="subtitle">Dashboard interactivo con visualizaciones D3.js</p>
+            
+            <div class="controls">
+                <div class="theme-toggle-container">
+                    <button id="theme-toggle" class="theme-toggle-btn">
+                        🌙 Modo Oscuro
+                    </button>
+                </div>
+                
+                <div class="date-selector">
+                    <label for="year-select">Año de análisis:</label>
+                    <select id="year-select">
+                        <option value="2023" selected>2023</option>
+                        <option value="2022">2022</option>
+                        <option value="2021">2021</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Dashboard -->
+    <main class="dashboard-main">
+        <!-- KPI Row -->
+        <section class="kpi-section">
+            <h2>📈 Indicadores Clave (KPIs)</h2>
+            <div class="kpi-grid">
+                <div class="kpi-card" id="kpi-revenue">
+                    <div class="kpi-icon">💰</div>
+                    <div class="kpi-content">
+                        <h3>Ingresos Totales</h3>
+                        <div class="kpi-value" id="kpi-revenue-value">$0</div>
+                        <div class="kpi-change" id="kpi-revenue-change">+0%</div>
+                    </div>
+                </div>
+                
+                <div class="kpi-card" id="kpi-orders">
+                    <div class="kpi-icon">🛒</div>
+                    <div class="kpi-content">
+                        <h3>Total Pedidos</h3>
+                        <div class="kpi-value" id="kpi-orders-value">0</div>
+                        <div class="kpi-change" id="kpi-orders-change">+0%</div>
+                    </div>
+                </div>
+                
+                <div class="kpi-card" id="kpi-aov">
+                    <div class="kpi-icon">💳</div>
+                    <div class="kpi-content">
+                        <h3>Valor Promedio Orden</h3>
+                        <div class="kpi-value" id="kpi-aov-value">$0</div>
+                        <div class="kpi-change" id="kpi-aov-change">+0%</div>
+                    </div>
+                </div>
+                
+                <div class="kpi-card" id="kpi-customers">
+                    <div class="kpi-icon">👥</div>
+                    <div class="kpi-content">
+                        <h3>Clientes Activos</h3>
+                        <div class="kpi-value" id="kpi-customers-value">0</div>
+                        <div class="kpi-change" id="kpi-customers-change">+0%</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Charts Grid -->
+        <section class="charts-section">
+            <div class="charts-grid">
+                <!-- Revenue Trend Chart -->
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3>📈 Tendencia de Ingresos Mensuales</h3>
+                        <p>Evolución de los ingresos a lo largo del año</p>
+                    </div>
+                    <div id="revenue-chart" class="chart-content"></div>
+                </div>
+
+                <!-- Categories Chart -->
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3>📦 Top Categorías de Productos</h3>
+                        <p>Categorías más rentables por ingresos</p>
+                    </div>
+                    <div id="categories-chart" class="chart-content"></div>
+                </div>
+
+                <!-- Reviews Distribution -->
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3>⭐ Distribución de Calificaciones</h3>
+                        <p>Distribución de puntuaciones de 1 a 5 estrellas</p>
+                    </div>
+                    <div id="reviews-chart" class="chart-content"></div>
+                </div>
+
+                <!-- Geographic Map (Placeholder) -->
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3>🗺️ Rendimiento Geográfico</h3>
+                        <p>Ingresos por región geográfica</p>
+                    </div>
+                    <div id="geo-chart" class="chart-content">
+                        <div class="placeholder-message">
+                            <p>🚧 Mapa choropleth en desarrollo</p>
+                            <p>Se requiere TopoJSON de regiones</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Bottom Metrics Row -->
+        <section class="metrics-section">
+            <h2>📊 Métricas Complementarias</h2>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <h4>🚚 Tiempo Promedio de Entrega</h4>
+                    <div class="metric-value" id="delivery-time">-- días</div>
+                </div>
+                
+                <div class="metric-card">
+                    <h4>⭐ Puntuación Promedio</h4>
+                    <div class="metric-value" id="avg-rating">-.- / 5.0</div>
+                </div>
+                
+                <div class="metric-card">
+                    <h4>🏃‍♂️ Entregas Rápidas</h4>
+                    <div class="metric-value" id="fast-delivery">--%</div>
+                </div>
+                
+                <div class="metric-card">
+                    <h4>💎 Productos Premium</h4>
+                    <div class="metric-value" id="premium-products">--</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Insights Section -->
+        <section class="insights-section">
+            <h2>💡 Insights y Recomendaciones</h2>
+            <div class="insights-grid">
+                <div class="insight-card">
+                    <h4>🎯 Rendimiento de Categorías</h4>
+                    <p>Las categorías principales concentran el 80% de los ingresos. Se recomienda optimizar el inventory para estos productos estrella.</p>
+                </div>
+                
+                <div class="insight-card">
+                    <h4>📈 Tendencias Temporales</h4>
+                    <p>Los picos de ventas coinciden con temporadas específicas. Planificar campañas de marketing según estos patrones.</p>
+                </div>
+                
+                <div class="insight-card">
+                    <h4>⭐ Satisfacción del Cliente</h4>
+                    <p>Correlación positiva entre tiempo de entrega rápido y calificaciones altas. Invertir en logística para mejorar reviews.</p>
+                </div>
+                
+                <div class="insight-card">
+                    <h4>🌎 Oportunidades Geográficas</h4>
+                    <p>Algunas regiones muestran potencial de crecimiento sin explotar. Considerar expansión focalizada.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="dashboard-footer">
+        <div class="footer-content">
+            <p>📊 Dashboard generado con D3.js v7 | Datos actualizados: <span id="last-updated">--</span></p>
+            <p>🔧 Desarrollado con Python, D3.js y módulos de analytics reutilizables</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/utils.js"></script>
+    <script src="js/charts/revenue.js"></script>
+    <script src="js/charts/categories.js"></script>
+    <script src="js/charts/reviews.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

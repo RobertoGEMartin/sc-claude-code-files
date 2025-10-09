@@ -1,0 +1,62 @@
+[
+  {
+    "category": "electronics",
+    "revenue": 1401359.21,
+    "orders": 1227,
+    "items_sold": 1327
+  },
+  {
+    "category": "home_garden",
+    "revenue": 862653.27,
+    "orders": 1045,
+    "items_sold": 1149
+  },
+  {
+    "category": "sports_outdoors",
+    "revenue": 278845.32,
+    "orders": 645,
+    "items_sold": 686
+  },
+  {
+    "category": "automotive",
+    "revenue": 247707.1,
+    "orders": 473,
+    "items_sold": 489
+  },
+  {
+    "category": "clothing_shoes_jewelry",
+    "revenue": 232745.04,
+    "orders": 828,
+    "items_sold": 884
+  },
+  {
+    "category": "toys_games",
+    "revenue": 70163.64,
+    "orders": 461,
+    "items_sold": 476
+  },
+  {
+    "category": "health_personal_care",
+    "revenue": 65370.27,
+    "orders": 613,
+    "items_sold": 630
+  },
+  {
+    "category": "tools_home_improvement",
+    "revenue": 54280.33,
+    "orders": 213,
+    "items_sold": 219
+  },
+  {
+    "category": "beauty_personal_care",
+    "revenue": 49213.3,
+    "orders": 309,
+    "items_sold": 315
+  },
+  {
+    "category": "books_media",
+    "revenue": 38559.08,
+    "orders": 687,
+    "items_sold": 725
+  }
+]

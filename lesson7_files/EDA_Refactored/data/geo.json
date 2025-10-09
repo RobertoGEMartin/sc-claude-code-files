@@ -1,0 +1,122 @@
+[
+  {
+    "state": "CA",
+    "revenue": 537880.74,
+    "orders": 769,
+    "avg_order_value": 699.4547984395318
+  },
+  {
+    "state": "TX",
+    "revenue": 403303.49,
+    "orders": 561,
+    "avg_order_value": 718.9010516934046
+  },
+  {
+    "state": "FL",
+    "revenue": 310195.84,
+    "orders": 431,
+    "avg_order_value": 719.7119257540603
+  },
+  {
+    "state": "NY",
+    "revenue": 253111.85,
+    "orders": 384,
+    "avg_order_value": 659.1454427083332
+  },
+  {
+    "state": "IL",
+    "revenue": 185930.88999999998,
+    "orders": 260,
+    "avg_order_value": 715.1188076923078
+  },
+  {
+    "state": "PA",
+    "revenue": 173260.68,
+    "orders": 225,
+    "avg_order_value": 770.0474666666668
+  },
+  {
+    "state": "OH",
+    "revenue": 157619.72,
+    "orders": 200,
+    "avg_order_value": 788.0986000000001
+  },
+  {
+    "state": "GA",
+    "revenue": 146414.65,
+    "orders": 190,
+    "avg_order_value": 770.6034210526317
+  },
+  {
+    "state": "MI",
+    "revenue": 132325.6,
+    "orders": 210,
+    "avg_order_value": 630.1219047619048
+  },
+  {
+    "state": "NC",
+    "revenue": 128314.74,
+    "orders": 177,
+    "avg_order_value": 724.9420338983051
+  },
+  {
+    "state": "NJ",
+    "revenue": 127437.56,
+    "orders": 158,
+    "avg_order_value": 806.5668354430379
+  },
+  {
+    "state": "VA",
+    "revenue": 105240.99,
+    "orders": 148,
+    "avg_order_value": 711.0877702702704
+  },
+  {
+    "state": "MA",
+    "revenue": 103111.13,
+    "orders": 135,
+    "avg_order_value": 763.7861481481482
+  },
+  {
+    "state": "AZ",
+    "revenue": 100109.15,
+    "orders": 130,
+    "avg_order_value": 770.0703846153846
+  },
+  {
+    "state": "WA",
+    "revenue": 95130.67,
+    "orders": 137,
+    "avg_order_value": 694.3844525547446
+  },
+  {
+    "state": "MD",
+    "revenue": 86675.43000000001,
+    "orders": 115,
+    "avg_order_value": 753.6993913043477
+  },
+  {
+    "state": "IN",
+    "revenue": 86285.68,
+    "orders": 106,
+    "avg_order_value": 814.0158490566035
+  },
+  {
+    "state": "MO",
+    "revenue": 76539.2,
+    "orders": 101,
+    "avg_order_value": 757.8138613861385
+  },
+  {
+    "state": "WI",
+    "revenue": 75841.91,
+    "orders": 99,
+    "avg_order_value": 766.079898989899
+  },
+  {
+    "state": "TN",
+    "revenue": 75564.82,
+    "orders": 99,
+    "avg_order_value": 763.2810101010102
+  }
+]
