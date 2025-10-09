@@ -3,10 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-commerce Business Analytics Dashboard</title>
+    <title>E-commerce Business Analytics     <!-- JavaScript -->
+    <script src="js/utils.js"></script>
+    <script src="js/charts/revenue.js"></script>
+    <script src="js/charts/categories.js"></script>
+    <script src="js/charts/reviews.js"></script>
+    <script src="js/charts/geo.js"></script>
+    <script src="js/main.js"></script>ard</title>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/themes.css">
     <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+    <script src="https://cdn.jsdelivr.net/npm/topojson@3"></script>
 </head>
 <body class="theme-light">
     <!-- Header -->
@@ -108,18 +115,13 @@
                     <div id="reviews-chart" class="chart-content"></div>
                 </div>
 
-                <!-- Geographic Map (Placeholder) -->
+                <!-- Geographic Map -->
                 <div class="chart-container">
                     <div class="chart-header">
                         <h3>🗺️ Rendimiento Geográfico</h3>
-                        <p>Ingresos por región geográfica</p>
+                        <p>Ingresos por estado con mapa interactivo</p>
                     </div>
-                    <div id="geo-chart" class="chart-content">
-                        <div class="placeholder-message">
-                            <p>🚧 Mapa choropleth en desarrollo</p>
-                            <p>Se requiere TopoJSON de regiones</p>
-                        </div>
-                    </div>
+                    <div id="geo-chart" class="chart-content"></div>
                 </div>
             </div>
         </section>
@@ -190,6 +192,7 @@
     <script src="js/charts/revenue.js"></script>
     <script src="js/charts/categories.js"></script>
     <script src="js/charts/reviews.js"></script>
+    <script src="js/charts/geo.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html>

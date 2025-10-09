@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Data Test</title>
+</head>
+<body>
+    <div id="test-output"></div>
+    <script>
+        console.log('Testing data access...');
+        
+        async function testDataAccess() {
+            try {
+                const response = await fetch('data/kpi_metrics.json');
+                console.log('Response status:', response.status);
+                const data = await response.json();
+                console.log('Data loaded:', data);
+                document.getElementById('test-output').innerHTML = JSON.stringify(data, null, 2);
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('test-output').innerHTML = 'Error: ' + error.message;
+            }
+        }
+        
+        testDataAccess();
+    </script>
+</body>
+</html>

@@ -1,6 +1,150 @@
 [
   {
     "month": 1,
+    "revenue": 232720.11,
+    "year": 2021,
+    "orders": 294
+  },
+  {
+    "month": 2,
+    "revenue": 200534.08,
+    "year": 2021,
+    "orders": 301
+  },
+  {
+    "month": 3,
+    "revenue": 221371.23,
+    "year": 2021,
+    "orders": 296
+  },
+  {
+    "month": 4,
+    "revenue": 183339.42,
+    "year": 2021,
+    "orders": 299
+  },
+  {
+    "month": 5,
+    "revenue": 211466.84,
+    "year": 2021,
+    "orders": 297
+  },
+  {
+    "month": 6,
+    "revenue": 212529.03,
+    "year": 2021,
+    "orders": 312
+  },
+  {
+    "month": 7,
+    "revenue": 221679.13,
+    "year": 2021,
+    "orders": 304
+  },
+  {
+    "month": 8,
+    "revenue": 225872.89,
+    "year": 2021,
+    "orders": 265
+  },
+  {
+    "month": 9,
+    "revenue": 254371.59,
+    "year": 2021,
+    "orders": 269
+  },
+  {
+    "month": 10,
+    "revenue": 195022.18,
+    "year": 2021,
+    "orders": 300
+  },
+  {
+    "month": 11,
+    "revenue": 212100.43,
+    "year": 2021,
+    "orders": 275
+  },
+  {
+    "month": 12,
+    "revenue": 211053.4,
+    "year": 2021,
+    "orders": 316
+  },
+  {
+    "month": 1,
+    "revenue": 261616.83,
+    "year": 2022,
+    "orders": 352
+  },
+  {
+    "month": 2,
+    "revenue": 242053.26,
+    "year": 2022,
+    "orders": 330
+  },
+  {
+    "month": 3,
+    "revenue": 254136.88,
+    "year": 2022,
+    "orders": 336
+  },
+  {
+    "month": 4,
+    "revenue": 218532.6,
+    "year": 2022,
+    "orders": 330
+  },
+  {
+    "month": 5,
+    "revenue": 264865.87,
+    "year": 2022,
+    "orders": 369
+  },
+  {
+    "month": 6,
+    "revenue": 251514.81,
+    "year": 2022,
+    "orders": 382
+  },
+  {
+    "month": 7,
+    "revenue": 261401.0,
+    "year": 2022,
+    "orders": 349
+  },
+  {
+    "month": 8,
+    "revenue": 252105.34,
+    "year": 2022,
+    "orders": 337
+  },
+  {
+    "month": 9,
+    "revenue": 273449.32,
+    "year": 2022,
+    "orders": 351
+  },
+  {
+    "month": 10,
+    "revenue": 228863.2,
+    "year": 2022,
+    "orders": 348
+  },
+  {
+    "month": 11,
+    "revenue": 230904.59,
+    "year": 2022,
+    "orders": 347
+  },
+  {
+    "month": 12,
+    "revenue": 227130.85,
+    "year": 2022,
+    "orders": 347
+  },
+  {
+    "month": 1,
     "revenue": 284855.48,
     "year": 2023,
     "orders": 384

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Test</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/themes.css">
+</head>
+<body>
+    <div id="test-output">
+        <h2>Testing Dashboard Components</h2>
+        <div id="console-log"></div>
+        <div id="data-test"></div>
+    </div>
+
+    <script src="js/utils.js"></script>
+    <script>
+        console.log('1. Utils loaded:', typeof ChartUtils);
+        document.getElementById('console-log').innerHTML += '<p>1. Utils loaded: ' + typeof ChartUtils + '</p>';
+        
+        // Test data loading
+        async function testData() {
+            try {
+                console.log('2. Testing data load...');
+                document.getElementById('console-log').innerHTML += '<p>2. Testing data load...</p>';
+                
+                const kpiData = await ChartUtils.loadData('kpi_metrics.json');
+                console.log('3. KPI data:', kpiData);
+                document.getElementById('console-log').innerHTML += '<p>3. KPI data loaded: ' + (kpiData ? 'Success' : 'Failed') + '</p>';
+                
+                if (kpiData) {
+                    document.getElementById('data-test').innerHTML = '<pre>' + JSON.stringify(kpiData, null, 2) + '</pre>';
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('console-log').innerHTML += '<p>Error: ' + error.message + '</p>';
+            }
+        }
+        
+        testData();
+    </script>
+</body>
+</html>

@@ -2,7 +2,9 @@
 class Dashboard {
     constructor() {
         this.data = {};
+        this.filteredData = {};
         this.charts = {};
+        this.currentYear = 2023; // Default year
         this.init();
     }
 
@@ -19,6 +21,9 @@ class Dashboard {
             
             // Load all data
             await this.loadAllData();
+            
+            // Initialize filtered data with current year
+            this.filterDataByYear(this.currentYear);
             
             // Initialize all components
             this.initializeKPIs();
@@ -49,24 +54,34 @@ class Dashboard {
             'delivery.json'
         ];
 
-        const loadPromises = files.map(async file => {
-            const key = file.replace('.json', '');
-            const data = await ChartUtils.loadData(file);
-            this.data[key] = data;
-            return { key, data };
-        });
+        try {
+            const loadPromises = files.map(async file => {
+                const key = file.replace('.json', '');
+                console.log(`🔄 Loading ${file}...`);
+                const data = await ChartUtils.loadData(file);
+                console.log(`📦 Loaded ${file}:`, data ? 'Success' : 'Failed', data ? `(${Array.isArray(data) ? data.length : Object.keys(data).length} items)` : '');
+                this.data[key] = data;
+                return { key, data };
+            });
 
-        const results = await Promise.allSettled(loadPromises);
-        
-        // Log results
-        results.forEach((result, index) => {
-            if (result.status === 'fulfilled') {
-                const { key, data } = result.value;
-                console.log(`✅ Loaded ${key}:`, data ? 'OK' : 'Empty');
-            } else {
-                console.warn(`⚠️ Failed to load ${files[index]}:`, result.reason);
-            }
-        });
+            const results = await Promise.allSettled(loadPromises);
+            
+            // Log results
+            results.forEach((result, index) => {
+                if (result.status === 'fulfilled') {
+                    const { key, data } = result.value;
+                    console.log(`✅ ${key}:`, data ? 'OK' : 'Empty');
+                } else {
+                    console.error(`❌ Failed to load ${files[index]}:`, result.reason);
+                }
+            });
+            
+            console.log('📊 Final data structure:', this.data);
+            
+        } catch (error) {
+            console.error('❌ Error in loadAllData:', error);
+            throw error;
+        }
     }
 
     showLoadingState() {
@@ -95,7 +110,8 @@ class Dashboard {
         const containers = [
             '#revenue-chart',
             '#categories-chart', 
-            '#reviews-chart'
+            '#reviews-chart',
+            '#geo-chart'
         ];
 
         containers.forEach(container => {
@@ -162,32 +178,66 @@ class Dashboard {
     }
 
     initializeCharts() {
+        console.log('🎨 Initializing charts with filtered data:', this.filteredData);
+        
         // Revenue Chart
-        if (this.data.revenue && this.data.revenue.length > 0) {
-            this.charts.revenue = new RevenueChart('#revenue-chart', this.data.revenue);
-        } else {
-            ChartUtils.showError('#revenue-chart', 'No hay datos de ingresos disponibles');
+        try {
+            if (this.filteredData.revenue && this.filteredData.revenue.length > 0) {
+                console.log('📈 Creating revenue chart with', this.filteredData.revenue.length, 'data points');
+                this.charts.revenue = new RevenueChart('#revenue-chart', this.filteredData.revenue);
+                console.log('✅ Revenue chart created successfully');
+            } else {
+                console.warn('⚠️ No revenue data available');
+                ChartUtils.showError('#revenue-chart', 'No hay datos de ingresos disponibles');
+            }
+        } catch (error) {
+            console.error('❌ Error creating revenue chart:', error);
+            ChartUtils.showError('#revenue-chart', 'Error al cargar el gráfico de ingresos');
         }
 
         // Categories Chart
-        if (this.data.categories && this.data.categories.length > 0) {
-            this.charts.categories = new CategoriesChart('#categories-chart', this.data.categories);
-        } else {
-            ChartUtils.showError('#categories-chart', 'No hay datos de categorías disponibles');
+        try {
+            if (this.filteredData.categories && this.filteredData.categories.length > 0) {
+                console.log('📊 Creating categories chart with', this.filteredData.categories.length, 'categories');
+                this.charts.categories = new CategoriesChart('#categories-chart', this.filteredData.categories);
+                console.log('✅ Categories chart created successfully');
+            } else {
+                console.warn('⚠️ No categories data available');
+                ChartUtils.showError('#categories-chart', 'No hay datos de categorías disponibles');
+            }
+        } catch (error) {
+            console.error('❌ Error creating categories chart:', error);
+            ChartUtils.showError('#categories-chart', 'Error al cargar el gráfico de categorías');
         }
 
         // Reviews Chart
-        if (this.data.reviews && Object.keys(this.data.reviews).length > 0) {
-            this.charts.reviews = new ReviewsChart('#reviews-chart', this.data.reviews);
-        } else {
-            ChartUtils.showError('#reviews-chart', 'No hay datos de calificaciones disponibles');
+        try {
+            if (this.filteredData.reviews && Object.keys(this.filteredData.reviews).length > 0) {
+                console.log('⭐ Creating reviews chart');
+                this.charts.reviews = new ReviewsChart('#reviews-chart', this.filteredData.reviews);
+                console.log('✅ Reviews chart created successfully');
+            } else {
+                console.warn('⚠️ No reviews data available');
+                ChartUtils.showError('#reviews-chart', 'No hay datos de calificaciones disponibles');
+            }
+        } catch (error) {
+            console.error('❌ Error creating reviews chart:', error);
+            ChartUtils.showError('#reviews-chart', 'Error al cargar el gráfico de calificaciones');
         }
 
-        // Geo Chart (placeholder for now)
-        const geoContainer = document.querySelector('#geo-chart');
-        if (geoContainer && !this.data.geo) {
-            // Keep the placeholder message from HTML
-            console.log('ℹ️ Geographic chart not implemented yet');
+        // Geographic Chart (temporarily disabled for debugging)
+        try {
+            if (typeof GeoChart !== 'undefined' && this.filteredData.geo && this.filteredData.geo.length > 0) {
+                console.log('🗺️ Creating geographic chart');
+                this.charts.geo = new GeoChart('#geo-chart', this.filteredData.geo);
+                console.log('✅ Geographic chart created successfully');
+            } else {
+                console.warn('⚠️ Geographic chart disabled or no geo data available');
+                ChartUtils.showError('#geo-chart', 'Mapa geográfico temporalmente deshabilitado');
+            }
+        } catch (error) {
+            console.error('❌ Error creating geographic chart:', error);
+            ChartUtils.showError('#geo-chart', 'Error al cargar el mapa geográfico');
         }
     }
 
@@ -252,9 +302,54 @@ class Dashboard {
 
     handleYearChange(year) {
         console.log(`📅 Year changed to: ${year}`);
-        // In a real implementation, this would reload data for the new year
-        // For now, just log the change
-        // this.loadDataForYear(year);
+        this.currentYear = parseInt(year);
+        
+        // Show loading state
+        this.showLoadingState();
+        
+        // Filter data by year and update charts
+        try {
+            this.filterDataByYear(this.currentYear);
+            this.updateChartsWithFilteredData();
+            console.log(`✅ Dashboard updated for year ${year}`);
+        } catch (error) {
+            console.error(`❌ Error updating dashboard for year ${year}:`, error);
+            this.showErrorState(error);
+        }
+    }
+
+    filterDataByYear(year) {
+        console.log(`🔍 Filtering data for year: ${year}`);
+        
+        // Filter revenue data by year
+        if (this.data.revenue && Array.isArray(this.data.revenue)) {
+            this.filteredData = {
+                revenue: this.data.revenue.filter(item => item.year === year),
+                categories: this.data.categories || [],
+                reviews: this.data.reviews || {},
+                geo: this.data.geo || [],
+                kpi_metrics: this.data.kpi_metrics || {}
+            };
+            
+            console.log(`📊 Filtered revenue data: ${this.filteredData.revenue.length} records for ${year}`);
+            if (this.filteredData.revenue.length > 0) {
+                const totalRevenue = this.filteredData.revenue.reduce((sum, item) => sum + item.revenue, 0);
+                console.log(`💰 Total revenue for ${year}: $${totalRevenue.toLocaleString()}`);
+            }
+        } else {
+            this.filteredData = { ...this.data };
+            console.log('⚠️ No revenue data available for filtering');
+        }
+    }
+
+    updateChartsWithFilteredData() {
+        // Update revenue chart with filtered data
+        if (this.charts.revenue && this.filteredData.revenue && this.filteredData.revenue.length > 0) {
+            this.charts.revenue.updateData(this.filteredData.revenue);
+        }
+
+        // Other charts don't necessarily need year filtering for this dataset
+        // but we can extend this as needed
     }
 
     handleKeyboard(event) {

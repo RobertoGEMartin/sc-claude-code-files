@@ -200,6 +200,12 @@ class RevenueChart {
             .style('fill', 'var(--chart-axis)');
     }
 
+    updateData(newData) {
+        // Update data and re-render chart
+        this.data = newData || [];
+        this.init();
+    }
+
     resize() {
         // Re-render chart on window resize
         this.init();
