@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Directo - Selector Año</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .selector { margin: 20px 0; }
+        .output { margin: 20px 0; padding: 15px; background: #f0f0f0; border-radius: 5px; }
+        #chart-area { width: 100%; height: 300px; border: 1px solid #ccc; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <h2>Test Directo del Selector de Año</h2>
+    
+    <div class="selector">
+        <label for="year-select">Año de análisis:</label>
+        <select id="year-select">
+            <option value="2023" selected>2023</option>
+            <option value="2022">2022</option>
+            <option value="2021">2021</option>
+        </select>
+    </div>
+    
+    <div class="output">
+        <h3>Estado del Test:</h3>
+        <div id="status">Inicializando...</div>
+    </div>
+    
+    <div class="output">
+        <h3>Datos del Año Seleccionado:</h3>
+        <div id="year-info">-</div>
+    </div>
+    
+    <div id="chart-area">
+        <p style="text-align: center; margin-top: 120px; color: #666;">Área del gráfico</p>
+    </div>
+
+    <script>
+        console.log('🚀 Iniciando test directo...');
+        
+        let testData = null;
+        let currentChart = null;
+        
+        function updateStatus(message) {
+            console.log(message);
+            document.getElementById('status').innerHTML += '<br>' + new Date().toLocaleTimeString() + ': ' + message;
+        }
+        
+        async function loadData() {
+            try {
+                updateStatus('📊 Cargando datos...');
+                const response = await fetch('data/revenue.json');
+                testData = await response.json();
+                updateStatus(`✅ Datos cargados: ${testData.length} registros`);
+                
+                const years = [...new Set(testData.map(item => item.year))].sort();
+                updateStatus(`📅 Años disponibles: ${years.join(', ')}`);
+                
+                return true;
+            } catch (error) {
+                updateStatus(`❌ Error: ${error.message}`);
+                return false;
+            }
+        }
+        
+        function filterByYear(year) {
+            if (!testData) return [];
+            return testData.filter(item => item.year === parseInt(year));
+        }
+        
+        function updateYearInfo(year) {
+            const yearData = filterByYear(year);
+            const totalRevenue = yearData.reduce((sum, item) => sum + item.revenue, 0);
+            const totalOrders = yearData.reduce((sum, item) => sum + item.orders, 0);
+            
+            document.getElementById('year-info').innerHTML = `
+                <strong>Año ${year}:</strong><br>
+                Registros: ${yearData.length}<br>
+                Revenue Total: $${totalRevenue.toLocaleString()}<br>
+                Pedidos Totales: ${totalOrders.toLocaleString()}
+            `;
+            
+            updateStatus(`📊 Actualizado para año ${year}: $${totalRevenue.toLocaleString()}`);
+            drawSimpleChart(yearData);
+        }
+        
+        function drawSimpleChart(data) {
+            const container = d3.select('#chart-area');
+            container.selectAll('*').remove();
+            
+            if (!data || data.length === 0) {
+                container.append('p')
+                    .style('text-align', 'center')
+                    .style('margin-top', '120px')
+                    .style('color', '#999')
+                    .text('No hay datos para mostrar');
+                return;
+            }
+            
+            const margin = {top: 20, right: 30, bottom: 40, left: 70};
+            const width = 600 - margin.left - margin.right;
+            const height = 250 - margin.top - margin.bottom;
+            
+            const svg = container.append('svg')
+                .attr('width', width + margin.left + margin.right)
+                .attr('height', height + margin.top + margin.bottom);
+                
+            const g = svg.append('g')
+                .attr('transform', `translate(${margin.left},${margin.top})`);
+            
+            const xScale = d3.scaleLinear()
+                .domain([1, 12])
+                .range([0, width]);
+                
+            const yScale = d3.scaleLinear()
+                .domain([0, d3.max(data, d => d.revenue)])
+                .range([height, 0]);
+            
+            const line = d3.line()
+                .x(d => xScale(d.month))
+                .y(d => yScale(d.revenue))
+                .curve(d3.curveMonotoneX);
+            
+            g.append('path')
+                .datum(data)
+                .attr('fill', 'none')
+                .attr('stroke', '#3b82f6')
+                .attr('stroke-width', 2)
+                .attr('d', line);
+                
+            g.selectAll('.dot')
+                .data(data)
+                .enter().append('circle')
+                .attr('class', 'dot')
+                .attr('cx', d => xScale(d.month))
+                .attr('cy', d => yScale(d.revenue))
+                .attr('r', 4)
+                .attr('fill', '#3b82f6');
+            
+            g.append('g')
+                .attr('transform', `translate(0,${height})`)
+                .call(d3.axisBottom(xScale).tickFormat(d => `Mes ${d}`));
+                
+            g.append('g')
+                .call(d3.axisLeft(yScale).tickFormat(d => `$${d/1000}K`));
+        }
+        
+        // Event listener principal
+        document.addEventListener('DOMContentLoaded', async function() {
+            updateStatus('✅ DOM listo');
+            
+            // Cargar datos
+            const dataLoaded = await loadData();
+            if (!dataLoaded) return;
+            
+            // Configurar selector
+            const yearSelect = document.getElementById('year-select');
+            if (yearSelect) {
+                updateStatus('✅ Selector encontrado');
+                
+                // Mostrar año inicial
+                updateYearInfo(yearSelect.value);
+                
+                // Event listener para cambios
+                yearSelect.addEventListener('change', function(event) {
+                    const selectedYear = event.target.value;
+                    updateStatus(`🔄 Cambiando a año: ${selectedYear}`);
+                    updateYearInfo(selectedYear);
+                });
+                
+                updateStatus('✅ Event listener configurado');
+                updateStatus('🎉 Test completado - ¡Prueba cambiar el año!');
+            } else {
+                updateStatus('❌ Selector NO encontrado');
+            }
+        });
+    </script>
+</body>
+</html>

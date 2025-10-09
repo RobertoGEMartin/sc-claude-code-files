@@ -270,19 +270,35 @@ class Dashboard {
     }
 
     setupEventListeners() {
+        console.log('🔧 Setting up event listeners...');
+        
         // Theme toggle
         const themeToggle = document.getElementById('theme-toggle');
         if (themeToggle) {
             themeToggle.addEventListener('click', ChartUtils.toggleTheme);
+            console.log('✅ Theme toggle listener added');
+        } else {
+            console.warn('⚠️ Theme toggle element not found');
         }
 
-        // Year selector
-        const yearSelect = document.getElementById('year-select');
-        if (yearSelect) {
-            yearSelect.addEventListener('change', (event) => {
-                this.handleYearChange(event.target.value);
-            });
-        }
+        // Year selector - with delay to ensure DOM is ready
+        setTimeout(() => {
+            const yearSelect = document.getElementById('year-select');
+            if (yearSelect) {
+                console.log('📅 Year selector found, adding event listener');
+                console.log('📅 Current year selector value:', yearSelect.value);
+                
+                yearSelect.addEventListener('change', (event) => {
+                    console.log('📅 Year selector changed:', event.target.value);
+                    this.handleYearChange(event.target.value);
+                });
+                console.log('✅ Year selector event listener added');
+            } else {
+                console.warn('⚠️ Year selector element not found!');
+                console.log('📋 Available elements with ID:', 
+                    Array.from(document.querySelectorAll('[id]')).map(el => el.id));
+            }
+        }, 100);
 
         // Listen for theme changes to update charts
         window.addEventListener('themeChanged', () => {
@@ -343,13 +359,49 @@ class Dashboard {
     }
 
     updateChartsWithFilteredData() {
+        console.log('🔄 Updating charts with filtered data...');
+        
         // Update revenue chart with filtered data
         if (this.charts.revenue && this.filteredData.revenue && this.filteredData.revenue.length > 0) {
+            console.log('📈 Updating revenue chart with', this.filteredData.revenue.length, 'data points');
             this.charts.revenue.updateData(this.filteredData.revenue);
+        } else {
+            console.warn('⚠️ Cannot update revenue chart - no data or chart not initialized');
         }
 
-        // Other charts don't necessarily need year filtering for this dataset
-        // but we can extend this as needed
+        // Update KPI metrics based on filtered data
+        this.updateKPIsForYear();
+
+        // Note: Categories, reviews, and geo charts typically don't change by year in this dataset
+        // but could be extended to filter by year if needed
+        
+        console.log('✅ Charts updated successfully');
+    }
+
+    updateKPIsForYear() {
+        if (!this.filteredData.revenue || this.filteredData.revenue.length === 0) {
+            console.warn('⚠️ No revenue data for KPI update');
+            return;
+        }
+
+        // Calculate metrics for the filtered year
+        const yearlyMetrics = {
+            total_revenue: this.filteredData.revenue.reduce((sum, item) => sum + item.revenue, 0),
+            total_orders: this.filteredData.revenue.reduce((sum, item) => sum + item.orders, 0),
+            avg_order_value: 0,
+            unique_customers: this.data.kpi_metrics?.unique_customers || 0,
+            revenue_growth_pct: 0
+        };
+
+        // Calculate average order value
+        if (yearlyMetrics.total_orders > 0) {
+            yearlyMetrics.avg_order_value = yearlyMetrics.total_revenue / yearlyMetrics.total_orders;
+        }
+
+        console.log('📊 Updated KPIs for year', this.currentYear, ':', yearlyMetrics);
+        
+        // Update KPI display
+        this.updateKPIValues(yearlyMetrics);
     }
 
     handleKeyboard(event) {

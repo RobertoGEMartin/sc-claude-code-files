@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Selector de Año</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/themes.css">
+</head>
+<body>
+    <div style="padding: 20px;">
+        <h2>Test del Selector de Año</h2>
+        
+        <!-- Selector de año -->
+        <div class="date-selector">
+            <label for="year-select">Año de análisis:</label>
+            <select id="year-select">
+                <option value="2023" selected>2023</option>
+                <option value="2022">2022</option>
+                <option value="2021">2021</option>
+            </select>
+        </div>
+        
+        <div id="test-output" style="margin-top: 20px; padding: 15px; background: #f5f5f5; border-radius: 5px;">
+            <p><strong>Log de eventos:</strong></p>
+            <div id="event-log"></div>
+        </div>
+        
+        <div id="data-display" style="margin-top: 20px;">
+            <h3>Datos por año:</h3>
+            <pre id="year-data"></pre>
+        </div>
+    </div>
+
+    <script src="js/utils.js"></script>
+    <script>
+        console.log('🧪 Iniciando test del selector de año...');
+        
+        let allData = {};
+        
+        function logEvent(message) {
+            console.log(message);
+            const logDiv = document.getElementById('event-log');
+            logDiv.innerHTML += '<p>' + new Date().toLocaleTimeString() + ': ' + message + '</p>';
+        }
+        
+        async function loadTestData() {
+            try {
+                logEvent('📊 Cargando datos de revenue.json...');
+                allData.revenue = await ChartUtils.loadData('revenue.json');
+                logEvent(`✅ Datos cargados: ${allData.revenue ? allData.revenue.length : 0} registros`);
+                
+                // Mostrar años disponibles
+                if (allData.revenue) {
+                    const years = [...new Set(allData.revenue.map(item => item.year))].sort();
+                    logEvent(`📅 Años disponibles: ${years.join(', ')}`);
+                    
+                    // Mostrar datos para año inicial
+                    updateYearDisplay(2023);
+                }
+                
+            } catch (error) {
+                logEvent(`❌ Error cargando datos: ${error.message}`);
+            }
+        }
+        
+        function updateYearDisplay(year) {
+            if (!allData.revenue) {
+                logEvent('⚠️ No hay datos de revenue disponibles');
+                return;
+            }
+            
+            const yearData = allData.revenue.filter(item => item.year === parseInt(year));
+            logEvent(`🔍 Datos filtrados para ${year}: ${yearData.length} registros`);
+            
+            if (yearData.length > 0) {
+                const totalRevenue = yearData.reduce((sum, item) => sum + item.revenue, 0);
+                const totalOrders = yearData.reduce((sum, item) => sum + item.orders, 0);
+                
+                logEvent(`💰 Revenue total ${year}: $${totalRevenue.toLocaleString()}`);
+                logEvent(`📦 Pedidos totales ${year}: ${totalOrders.toLocaleString()}`);
+                
+                document.getElementById('year-data').textContent = JSON.stringify(yearData, null, 2);
+            } else {
+                logEvent(`⚠️ No hay datos para el año ${year}`);
+                document.getElementById('year-data').textContent = 'No hay datos para este año';
+            }
+        }
+        
+        // Setup event listener
+        document.addEventListener('DOMContentLoaded', function() {
+            logEvent('🏁 DOM cargado, configurando event listener...');
+            
+            const yearSelect = document.getElementById('year-select');
+            if (yearSelect) {
+                logEvent('✅ Selector de año encontrado');
+                
+                yearSelect.addEventListener('change', function(event) {
+                    const selectedYear = event.target.value;
+                    logEvent(`📅 Año seleccionado: ${selectedYear}`);
+                    updateYearDisplay(selectedYear);
+                });
+                
+                logEvent('✅ Event listener configurado');
+            } else {
+                logEvent('❌ Selector de año NO encontrado');
+            }
+            
+            // Cargar datos
+            loadTestData();
+        });
+    </script>
+</body>
+</html>
